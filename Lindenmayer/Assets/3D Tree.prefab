@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfc127830577aa479275951fde9ed06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BranchDelay: 0.01
+  BranchDelay: 0.5
+  BranchGrowTime: 0.2
   BranchPrefab: {fileID: 8157898484609182470, guid: a451bb7680e3b524ab56125dfc388df4, type: 3}
   RootBranch: {fileID: 3729384560688476559}
 --- !u!1001 &4825538885674752649

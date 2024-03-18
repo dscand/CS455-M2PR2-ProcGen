@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
@@ -8,8 +9,8 @@ using UnityEngine.UIElements;
 public class TreeBuilder : MonoBehaviour
 {
 	private Coroutine builder;
-	public float BranchDelayStart = 2.0f;
-	private float BranchDelay = 0.0f;
+	public float BranchDelay = 0.0f;
+	public float BranchGrowTime = 0.2f;
 	public GameObject BranchPrefab;
 	public GameObject RootBranch;
 
@@ -78,7 +79,7 @@ public class TreeBuilder : MonoBehaviour
 	}
 
 
-	void Start()
+	/*void Start()
 	{
 		Rule[] rules = {
 			new Rule_ShortTerminate(),
@@ -93,7 +94,7 @@ public class TreeBuilder : MonoBehaviour
 		);
 
 		StartBuild(rootBranch, rules);
-	}
+	}*/
 
 	public void StartBuild(Branch rootBranch, Rule[] rules)
 	{
@@ -101,13 +102,22 @@ public class TreeBuilder : MonoBehaviour
 	}
 	public void StopBuild()
 	{
-		StopCoroutine(builder);
+		if (!builder.IsUnityNull()) StopCoroutine(builder);
+	}
+
+	public void DestroyTree()
+	{
+		foreach (Transform child in transform)
+		{
+			if (child.gameObject != RootBranch)
+			{
+				Destroy(child.gameObject);
+			}
+		}
 	}
 
 	public IEnumerator BuildTree(Branch root, Rule[] rules)
 	{
-		//BranchDelay = BranchDelayStart;
-
 		//List<Branch> tree = new List<Branch>() {root};
 		Queue<Branch> active = new Queue<Branch>();
 		active.Enqueue(root);
@@ -133,19 +143,40 @@ public class TreeBuilder : MonoBehaviour
 				}
 
 			}
-			yield return RenderBranches(RootBranch, newBranches.ToArray()); //current.gameObject
-			//BranchDelay *= 0.9f;
+			yield return RenderBranches(transform, newBranches.ToArray());
 		}
 		yield break;
 	}
-	public IEnumerator RenderBranches(GameObject parent, Branch[] branches)
+	public IEnumerator RenderBranches(Transform parent, Branch[] branches)
 	{
 		foreach (Branch branch in branches)
 		{
-			GameObject newBranch = Instantiate(BranchPrefab, branch.mid(), branch.orientation, transform);
-			newBranch.transform.localScale = new Vector3(newBranch.transform.localScale.x, branch.length, newBranch.transform.localScale.z);
-			yield return new WaitForSeconds(BranchDelay);
+			StartCoroutine(RenderBranch(parent, branch));
+			yield return new WaitForSeconds(BranchDelay * branch.length);
 		}
+		yield break;
+	}
+	public IEnumerator RenderBranch(Transform parent, Branch branch)
+	{
+		GameObject newBranch = Instantiate(BranchPrefab, parent.transform.TransformPoint(branch.position), parent.rotation * branch.orientation, parent);
+		newBranch.transform.localScale = new Vector3(newBranch.transform.localScale.x, 0, newBranch.transform.localScale.z);
+	
+		float elapsedTime = 0;
+		while (elapsedTime < BranchGrowTime)
+		{
+			if (newBranch.IsUnityNull()) yield break;
+			newBranch.transform.localPosition = Vector3.Lerp(branch.position, branch.mid(), elapsedTime / BranchGrowTime);
+
+			float newScale = Mathf.Lerp(0, branch.length, elapsedTime / BranchGrowTime);
+			newBranch.transform.localScale = new Vector3(newBranch.transform.localScale.x, newScale, newBranch.transform.localScale.z);
+			
+			elapsedTime += Time.deltaTime;
+			yield return null;
+		}  
+
+		// Make sure we got there
+		newBranch.transform.localPosition = branch.mid();
+		newBranch.transform.localScale = new Vector3(newBranch.transform.localScale.x, branch.length, newBranch.transform.localScale.z);
 		yield break;
 	}
 

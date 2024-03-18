@@ -35,11 +35,11 @@ public class TreeBuilder3D : TreeBuilder
 	}
 
 
-	void Start()
+	/*void Start()
 	{
 		Rule[] rules = {
 			new Rule_ShortTerminate(),
-            new Rule_DownTerminate(),
+			new Rule_DownTerminate(),
 			new Rule_EqualSplit(),
 		};
 
@@ -50,5 +50,5 @@ public class TreeBuilder3D : TreeBuilder
 		);
 
 		StartCoroutine(BuildTree(rootBranch, rules));
-	}
+	}*/
 }
