@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UIElements;
+using DynamicExpresso;
 
 public class TreeBuilder : MonoBehaviour
 {
@@ -45,6 +44,16 @@ public class TreeBuilder : MonoBehaviour
 	{
 		public virtual bool matches(Branch branch) {return false;}
 		public virtual Branch[] rhs(Branch branch) {return new Branch[0];}
+	}
+
+	public class RuleEval : Rule
+	{
+		public override bool matches(Branch branch) {
+			var interpreter = new Interpreter().SetVariable("branch", branch);
+			var result = interpreter.Eval("branch.length < 0.1");
+			return branch.length < 0.1;
+		}
+		public override Branch[] rhs(Branch branch) {return new Branch[0];}
 	}
 
 	public class Rule_ShortTerminate : Rule

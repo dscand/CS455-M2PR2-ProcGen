@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfc127830577aa479275951fde9ed06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BranchDelay: 0.5
+  BranchDelay: 0.2
   BranchGrowTime: 0.2
   BranchPrefab: {fileID: 8157898484609182470, guid: a451bb7680e3b524ab56125dfc388df4, type: 3}
   RootBranch: {fileID: 3729384560688476559}
@@ -104,6 +104,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3446812272977619172, guid: a451bb7680e3b524ab56125dfc388df4, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 728fa80adfd22c841abb9c7225667f93, type: 2}
     - target: {fileID: 8157898484609182470, guid: a451bb7680e3b524ab56125dfc388df4, type: 3}
       propertyPath: m_Name
       value: Root
